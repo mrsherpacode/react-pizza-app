@@ -4,14 +4,17 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./ui/Home";
 import { default as Menu, loader as menuLoader } from "./features/menu/Menu";
 import Cart from "./features/cart/Cart";
+import Error from "./ui/Error";
 import CreateOrder from "./features/order/CreateOrder";
-import Order from "./features/order/Order";
+import Order, { loader as OrderLoader } from "./features/order/Order";
 import AppLayout from "./ui/AppLayout";
 
 const router = createBrowserRouter([
   //AppLayout is the parent of all other routes.
   {
     element: <AppLayout />,
+    // error element in the parent route because errors that happen in nested routes bubble up to the parent route.
+    errorElement: <Error />,
     children: [
       {
         path: "/",
@@ -20,8 +23,10 @@ const router = createBrowserRouter([
       {
         path: "/menu",
         element: <Menu />,
-        // / Connecting the Loader to the Route
+        // Connecting the Loader to the Route
         loader: menuLoader,
+        // Error message if something goes wrong
+        errorElement: <Error />,
       },
       {
         path: "/cart",
@@ -34,6 +39,8 @@ const router = createBrowserRouter([
       {
         path: "/order/:orderId",
         element: <Order />,
+        loader: OrderLoader,
+        errorElement: <Error />,
       },
     ],
   },
