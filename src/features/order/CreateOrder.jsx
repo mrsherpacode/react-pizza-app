@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Form, redirect } from "react-router-dom";
+import { Form, redirect, useNavigation, useActionData } from "react-router-dom";
 import { createOrder } from "../../services/apiRestaurant";
 
 // https://uibakery.io/regex-library/phone-number
@@ -33,9 +33,13 @@ const fakeCart = [
 ];
 
 function CreateOrder() {
+  const navigation = useNavigation();
+  // checking the state of navigation
+  const isSubmitting = navigation.state === "submitting";
   // const [withPriority, setWithPriority] = useState(false);
   const cart = fakeCart;
-
+  // for errors messages
+  const formErrors = useActionData();
   return (
     <div>
       <h2>Ready to order? Let's go!</h2>
@@ -50,6 +54,7 @@ function CreateOrder() {
           <div>
             <input type="tel" name="phone" required />
           </div>
+          {formErrors?.phone && <p>{formErrors.phone}</p>}
         </div>
 
         <div>
@@ -67,13 +72,15 @@ function CreateOrder() {
             // value={withPriority}
             // onChange={(e) => setWithPriority(e.target.checked)}
           />
-          <label htmlFor="priority">Want to yo give your order priority?</label>
+          <label htmlFor="priority">Want to give your order priority?</label>
         </div>
 
         <div>
           {/* also submitting cart data */}
           <input type="hidden" name="cart" value={JSON.stringify(cart)} />
-          <button>Order now</button>
+          <button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "placing order.." : "order now"}
+          </button>
         </div>
       </Form>
     </div>
@@ -91,6 +98,12 @@ export async function action({ request }) {
     cart: JSON.parse(data.cart),
     priority: data.priority === "on",
   };
+  // returning error message if there is some errors
+  const errors = {};
+  if (!isValidPhone(order.phone))
+    errors.phone = "please give us correct phone no";
+  if (Object.keys(errors).length > 0) return errors;
+
   // We have an API function createOrder that accepts a new order object and returns the newly created order. In the action, we await this function and then redirect the user to the new order's page using React Router's redirect function. We cannot use hooks like useNavigate here because hooks can only be called inside components.
   const newOrder = await createOrder(order);
   // Redirects after form submission are handled using React Router's redirect function, not hooks like useNavigate.
