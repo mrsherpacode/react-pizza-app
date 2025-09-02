@@ -2,7 +2,7 @@ import { Form, redirect, useNavigation, useActionData } from "react-router-dom";
 import { createOrder } from "../../services/apiRestaurant";
 
 // https://uibakery.io/regex-library/phone-number
-const isValidPhone = (str) =>
+const isValidPhone = str =>
   /^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/.test(
     str
   );
@@ -45,13 +45,13 @@ function CreateOrder() {
       <Form method="POST">
         <div>
           <label>First Name</label>
-          <input type="text" name="customer" required />
+          <input className="input" type="text" name="customer" required />
         </div>
 
         <div>
           <label>Phone number</label>
           <div>
-            <input type="tel" name="phone" required />
+            <input className="input" type="tel" name="phone" required />
           </div>
           {formErrors?.phone && <p>{formErrors.phone}</p>}
         </div>
@@ -59,12 +59,13 @@ function CreateOrder() {
         <div>
           <label>Address</label>
           <div>
-            <input type="text" name="address" required />
+            <input className="input" type="text" name="address" required />
           </div>
         </div>
 
         <div>
           <input
+            className="h-6 w-5 accent-yellow-400 focus:outline-none focus:ring-offset-2"
             type="checkbox"
             name="priority"
             id="priority"
@@ -77,7 +78,11 @@ function CreateOrder() {
         <div>
           {/* also submitting cart data */}
           <input type="hidden" name="cart" value={JSON.stringify(cart)} />
-          <button type="submit" disabled={isSubmitting}>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="inline-block rounded-full bg-yellow-400 px-7 py-4 uppercase tracking-wide text-stone-600 transition-colors duration-300 hover:bg-yellow-300 focus:bg-yellow-300 focus:outline-none focus:ring focus:ring-yellow-300 focus:ring-offset-2 disabled:cursor-not-allowed"
+          >
             {isSubmitting ? "placing order.." : "order now"}
           </button>
         </div>
@@ -104,10 +109,10 @@ export async function action({ request }) {
   if (Object.keys(errors).length > 0) return errors;
 
   // We have an API function createOrder that accepts a new order object and returns the newly created order. In the action, we await this function and then redirect the user to the new order's page using React Router's redirect function. We cannot use hooks like useNavigate here because hooks can only be called inside components.
-  const newOrder = await createOrder(order);
+  // const newOrder = await createOrder(order);
   // Redirects after form submission are handled using React Router's redirect function, not hooks like useNavigate.
 
-  return redirect(`/order/${newOrder.id}`);
+  // return redirect(`/order/${newOrder.id}`);
 }
 
 export default CreateOrder;
