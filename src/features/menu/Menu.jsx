@@ -8,8 +8,8 @@ function Menu() {
   //  Modern React Router data loading
   const menu = useLoaderData();
   return (
-    <ul>
-      {menu.map((pizza) => (
+    <ul className="divide-y divide-stone-200 px-2">
+      {menu.map(pizza => (
         <MenuItem key={pizza.id} pizza={pizza} />
       ))}
     </ul>
