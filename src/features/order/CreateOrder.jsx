@@ -122,10 +122,10 @@ export async function action({ request }) {
   if (Object.keys(errors).length > 0) return errors;
 
   // We have an API function createOrder that accepts a new order object and returns the newly created order. In the action, we await this function and then redirect the user to the new order's page using React Router's redirect function. We cannot use hooks like useNavigate here because hooks can only be called inside components.
-  // const newOrder = await createOrder(order);
+  const newOrder = await createOrder(order);
   // Redirects after form submission are handled using React Router's redirect function, not hooks like useNavigate.
 
-  // return redirect(`/order/${newOrder.id}`);
+  return redirect(`/order/${newOrder.id}`);
 }
 
 export default CreateOrder;
