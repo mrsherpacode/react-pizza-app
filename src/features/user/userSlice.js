@@ -25,7 +25,7 @@ import { createSlice } from "@reduxjs/toolkit";
 //Now, let's create a slice of state using Redux Toolkit's createSlice function.
 // initial state
 const initialState = {
-  username: "TEST",
+  username: "",
 };
 //Next, create the user slice by calling createSlice with an object containing the slice's name, the initial state, and the reducers.
 const userSlice = createSlice({
