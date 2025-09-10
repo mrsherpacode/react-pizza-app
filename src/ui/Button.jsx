@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 
 // creating a reusable Button component
-function Button({ children, disabled, to, typeOf }) {
+function Button({ children, disabled, to, typeOf, onClick }) {
   const base =
     "inline-block  text-sm rounded-full bg-yellow-400  uppercase tracking-wide text-stone-600 transition-colors duration-300 hover:bg-yellow-300 focus:bg-yellow-300 focus:outline-none focus:ring focus:ring-yellow-300 focus:ring-offset-2 disabled:cursor-not-allowed";
   const styles = {
@@ -15,6 +15,12 @@ function Button({ children, disabled, to, typeOf }) {
       <Link to={to} className={styles[typeOf]}>
         {children}
       </Link>
+    );
+  if (onClick)
+    return (
+      <button disabled={disabled} className={styles[typeOf]} onClick={onClick}>
+        {children}
+      </button>
     );
   return (
     <button disabled={disabled} className={styles[typeOf]}>
