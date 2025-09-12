@@ -38,9 +38,9 @@ const cartSlice = createSlice({
       item.quantity--;
       item.totalPrice = item.quantity * item.unitPrice;
     },
-  },
-  clearCart(state) {
-    state.cart = [];
+    clearCart(state) {
+      state.cart = [];
+    },
   },
 });
 export const {
@@ -51,6 +51,9 @@ export const {
   clearCart,
 } = cartSlice.actions;
 export default cartSlice.reducer;
+// getting cart from the Redux store
+export const getCart = state => state.cart.cart;
+
 // computing the  total quantity of cart
 export const getTotalCartQuantity = state =>
   state.cart.cart.reduce((sum, item) => sum + item.quantity, 0);
