@@ -37,6 +37,11 @@ const cartSlice = createSlice({
       const item = state.cart.find(item => item.pizzaId === action.payload);
       item.quantity--;
       item.totalPrice = item.quantity * item.unitPrice;
+      // Reuse deleteItem reducer logic
+      // We reuse the existing deleteItem reducer logic by manually calling it within the decreaseItemQuantity reducer when the quantity hits zero.
+
+      if (item.quantity === 0)
+        return cartSlice.caseReducers.deleteItem(state, action);
     },
     clearCart(state) {
       state.cart = [];
