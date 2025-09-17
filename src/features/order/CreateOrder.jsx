@@ -17,8 +17,15 @@ const isValidPhone = str =>
   );
 
 function CreateOrder() {
-  //we use the useSelector hook to read the username from the Redux store:
-  const username = useSelector(state => state.user.username);
+  //we use the useSelector hook to read the data from the Redux store:
+  const {
+    username,
+    status: addressStatus,
+    position,
+    address,
+    error: errorAddress,
+  } = useSelector(state => state.user);
+  const isLoadingAddress = addressStatus === "loading";
   const navigation = useNavigation();
   // checking the state of navigation
   const isSubmitting = navigation.state === "submitting";
@@ -40,7 +47,7 @@ function CreateOrder() {
     <div className="px-4 py-6">
       <h2 className="mb-8 text-xl font-semibold">Ready to order? Let's go!</h2>
       {/* just for testing */}
-      <button onClick={() => dispatch(fetchAddress())}>fetch order</button>
+
       <Form method="POST">
         <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
           <label className="sm:basis-40">First Name</label>
@@ -67,13 +74,35 @@ function CreateOrder() {
 
         <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
           <label className="sm:basis-40">Address</label>
-          <div className="grow">
+          <div className="relative grow">
             <input
               className="input w-full"
               type="text"
               name="address"
               required
+              defaultValue={address}
+              disabled={isLoadingAddress}
             />
+
+            {!position.latitude && !position.longitude && (
+              <span className="absolute right-[3px] top-[3px] z-50 md:right-[5px] md:top-[5px]">
+                <Button
+                  disabled={isLoadingAddress}
+                  typeOf="base"
+                  onClick={e => {
+                    e.preventDefault();
+                    dispatch(fetchAddress());
+                  }}
+                >
+                  Order Address
+                </Button>
+              </span>
+            )}
+            {addressStatus === "error" && (
+              <p className="mt-2 rounded-md bg-red-200 p-2 text-sm text-red-700">
+                {errorAddress}
+              </p>
+            )}
           </div>
         </div>
 
@@ -94,7 +123,21 @@ function CreateOrder() {
         <div>
           {/* also submitting cart data */}
           <input type="hidden" name="cart" value={JSON.stringify(cart)} />
-          <Button type="submit" disabled={isSubmitting} typeOf="primary">
+          <input
+            type="hidden"
+            name="position"
+            value={
+              position.latitude && position.longitude
+                ? `${position.latitude},${position.longitude}`
+                : ""
+            }
+          />
+
+          <Button
+            type="submit"
+            disabled={isSubmitting || isLoadingAddress}
+            typeOf="primary"
+          >
             {isSubmitting
               ? "placing order.."
               : `order now ${formatCurrency(totalPrice)}`}
@@ -116,6 +159,7 @@ export async function action({ request }) {
     cart: JSON.parse(data.cart),
     priority: data.priority === "true",
   };
+
   // returning error message if there is some errors
   const errors = {};
   if (!isValidPhone(order.phone))
